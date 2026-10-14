@@ -6,7 +6,7 @@
 ## 🔗 專案連結與線上展示 (Links & Live Demo)
 * 🌐 **GitHub Pages (Live Demo)**: [https://kouou24.github.io/HW2_Linear_regression/](https://kouou24.github.io/HW2_Linear_regression/)
 * 📦 **GitHub Repository**: [https://github.com/Kouou24/HW2_Linear_regression](https://github.com/Kouou24/HW2_Linear_regression)
-* Result:
+* 🌐 **Result**:
 <img width="1920" height="4642" alt="image" src="https://github.com/user-attachments/assets/1ac52b4a-233e-4756-9e77-c1b2333fe2e6" />
 ---
 
