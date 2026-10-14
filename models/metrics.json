@@ -1,0 +1,34 @@
+{
+    "simple_regression": {
+        "r2": 0.34761575791181254,
+        "rmse": 3.036692039406711,
+        "mae": 2.107903570147309
+    },
+    "full_multiple_regression": {
+        "r2": 0.769649572490731,
+        "adj_r2": 0.764843187990924,
+        "rmse": 1.804444509272285,
+        "mae": 0.4523920089625871
+    },
+    "selected_features_regression": {
+        "r2": 0.7697253886436901,
+        "adj_r2": 0.7654643318414145,
+        "rmse": 1.8041475328326646,
+        "mae": 0.45151475215915104
+    },
+    "elasticnet_cv": {
+        "r2": 0.7543628528392539,
+        "rmse": 1.8633568840111687,
+        "mae": 0.646380462032656
+    },
+    "autoregressive_comparison": {
+        "with_previous_scores_r2": 0.7697253886436901,
+        "without_previous_scores_r2": 0.7355078072070651
+    },
+    "selected_features_count": 24,
+    "dropped_features": [
+        "Sleep_Hours",
+        "School_Type_Public",
+        "Gender_Male"
+    ]
+}
