@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Performance Linear Regression | Live Demo & Dashboard</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft JhengHei", sans-serif; }
+    .gradient-header {
+      background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%);
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+  <!-- Header -->
+  <header class="gradient-header text-white py-12 px-4 shadow-lg">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="bg-white/20 text-white text-xs px-2.5 py-1 rounded-full font-semibold uppercase tracking-wider">
+              CRISP-DM Standard
+            </span>
+            <span class="bg-emerald-400 text-slate-900 text-xs px-2.5 py-1 rounded-full font-bold">
+              Live Demo
+            </span>
+          </div>
+          <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">
+            學生學業成績預測與線性回歸分析儀表板
+          </h1>
+          <p class="text-blue-100 mt-2 text-base md:text-lg">
+            基於 StudentPerformanceFactors.csv 實作特徵選擇、區間估計 (95% CI & PI) 與即時推論計算機
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <a href="https://github.com/Kouou24/HW2_Linear_regression" target="_blank"
+             class="inline-flex items-center gap-2 bg-slate-900/80 hover:bg-slate-900 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition shadow-md">
+            <i class="fab fa-github text-base"></i> GitHub 儲存庫
+          </a>
+          <a href="#calculator"
+             class="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-900 px-4 py-2.5 rounded-lg text-sm font-bold transition shadow-md">
+            <i class="fas fa-calculator text-base"></i> 即時成績計算機
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Bar -->
+  <nav class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 flex overflow-x-auto space-x-6 text-sm font-medium text-slate-600">
+      <a href="#overview" class="py-3 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 whitespace-nowrap">專案概覽</a>
+      <a href="#crisp-dm" class="py-3 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 whitespace-nowrap">CRISP-DM 流程</a>
+      <a href="#calculator" class="py-3 text-blue-600 border-b-2 border-blue-600 whitespace-nowrap font-bold">即時推論計算機</a>
+      <a href="#models-comparison" class="py-3 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 whitespace-nowrap">模型效能評估</a>
+      <a href="#figures" class="py-3 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 whitespace-nowrap">視覺化圖表庫</a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 py-8 space-y-12">
+
+    <!-- Section 1: Overview KPIs -->
+    <section id="overview" class="space-y-4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+          <div class="text-xs font-semibold text-slate-400 uppercase">樣本總筆數</div>
+          <div class="text-2xl font-bold text-slate-900 mt-1">6,607 筆</div>
+          <div class="text-xs text-emerald-600 mt-1 flex items-center gap-1">
+            <i class="fas fa-check-circle"></i> 20 個自變數欄位
+          </div>
+        </div>
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+          <div class="text-xs font-semibold text-slate-400 uppercase">最佳測試集 R²</div>
+          <div class="text-2xl font-bold text-blue-600 mt-1">0.7697</div>
+          <div class="text-xs text-slate-500 mt-1">Adj-R²: 0.7655</div>
+        </div>
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+          <div class="text-xs font-semibold text-slate-400 uppercase">測試集 RMSE</div>
+          <div class="text-2xl font-bold text-rose-600 mt-1">1.8041 分</div>
+          <div class="text-xs text-slate-500 mt-1">MAE: 0.4515 分</div>
+        </div>
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+          <div class="text-xs font-semibold text-slate-400 uppercase">特徵精簡度</div>
+          <div class="text-2xl font-bold text-amber-500 mt-1">24 個核心特徵</div>
+          <div class="text-xs text-emerald-600 mt-1">剔除 3 個無顯著性雜訊</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Interactive Predictor Calculator -->
+    <section id="calculator" class="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-md">
+      <div class="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-slate-200 gap-4">
+        <div>
+          <span class="badge bg-blue-100 text-blue-700 mb-2">Phase 6 Deployment</span>
+          <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
+            <i class="fas fa-sliders-h text-blue-600"></i> 學生學業成績即時推論計算機
+          </h2>
+          <p class="text-sm text-slate-500 mt-1">
+            調整下方學生行為與背景特徵，即時透過已訓練之多元回歸公式推估期末成績、95% 信賴區間 (CI) 與 95% 預測區間 (PI)。
+          </p>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="loadPreset('high')" class="px-3.5 py-2 text-xs font-bold rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition">
+            <i class="fas fa-user-graduate"></i> 帶入範例一：高學習投入
+          </button>
+          <button onclick="loadPreset('atrisk')" class="px-3.5 py-2 text-xs font-bold rounded-lg bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 transition">
+            <i class="fas fa-exclamation-triangle"></i> 帶入範例二：潛在高風險
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-6">
+        <!-- Input Form (2 cols) -->
+        <div class="lg:col-span-2 space-y-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+            <!-- Attendance -->
+            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+              <div class="flex justify-between items-center mb-1">
+                <label class="text-xs font-bold text-slate-700">課堂出席率 (%)</label>
+                <span id="val_Attendance" class="text-sm font-extrabold text-blue-600">95%</span>
+              </div>
+              <input id="in_Attendance" type="range" min="60" max="100" value="95"
+                     class="w-full accent-blue-600" oninput="updatePrediction()">
+              <div class="flex justify-between text-[10px] text-slate-400 mt-0.5">
+                <span>60%</span><span>80%</span><span>100%</span>
+              </div>
+            </div>
+
+            <!-- Hours_Studied -->
+            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+              <div class="flex justify-between items-center mb-1">
+                <label class="text-xs font-bold text-slate-700">每週自修時數 (Hours)</label>
+                <span id="val_Hours_Studied" class="text-sm font-extrabold text-blue-600">28 小時</span>
+              </div>
+              <input id="in_Hours_Studied" type="range" min="1" max="44" value="28"
+                     class="w-full accent-blue-600" oninput="updatePrediction()">
+              <div class="flex justify-between text-[10px] text-slate-400 mt-0.5">
+                <span>1</span><span>20</span><span>44</span>
+              </div>
+            </div>
+
+            <!-- Previous_Scores -->
+            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+              <div class="flex justify-between items-center mb-1">
+                <label class="text-xs font-bold text-slate-700">歷史成績 (Previous Scores)</label>
+                <span id="val_Previous_Scores" class="text-sm font-extrabold text-blue-600">90 分</span>
+              </div>
+              <input id="in_Previous_Scores" type="range" min="40" max="100" value="90"
+                     class="w-full accent-blue-600" oninput="updatePrediction()">
+              <div class="flex justify-between text-[10px] text-slate-400 mt-0.5">
+                <span>40</span><span>70</span><span>100</span>
+              </div>
+            </div>
+
+            <!-- Tutoring_Sessions -->
+            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+              <div class="flex justify-between items-center mb-1">
+                <label class="text-xs font-bold text-slate-700">課外輔導次數 (次/月)</label>
+                <span id="val_Tutoring_Sessions" class="text-sm font-extrabold text-blue-600">3 次</span>
+              </div>
+              <input id="in_Tutoring_Sessions" type="range" min="0" max="8" value="3"
+                     class="w-full accent-blue-600" oninput="updatePrediction()">
+              <div class="flex justify-between text-[10px] text-slate-400 mt-0.5">
+                <span>0</span><span>4</span><span>8</span>
+              </div>
+            </div>
+
+            <!-- Physical_Activity -->
+            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+              <div class="flex justify-between items-center mb-1">
+                <label class="text-xs font-bold text-slate-700">運動鍛鍊時數 (小時/週)</label>
+                <span id="val_Physical_Activity" class="text-sm font-extrabold text-blue-600">4 小時</span>
+              </div>
+              <input id="in_Physical_Activity" type="range" min="0" max="6" value="4"
+                     class="w-full accent-blue-600" oninput="updatePrediction()">
+              <div class="flex justify-between text-[10px] text-slate-400 mt-0.5">
+                <span>0</span><span>3</span><span>6</span>
+              </div>
+            </div>
+
+            <!-- Parental Involvement -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">家長參與度 (Parental Involvement)</label>
+              <select id="in_Parental_Involvement" onchange="updatePrediction()"
+                      class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500">
+                <option value="High" selected>High (高參與)</option>
+                <option value="Medium">Medium (中等)</option>
+                <option value="Low">Low (低參與)</option>
+              </select>
+            </div>
+
+            <!-- Access to Resources -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">學習資源豐富度 (Resources)</label>
+              <select id="in_Access_to_Resources" onchange="updatePrediction()"
+                      class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500">
+                <option value="High" selected>High (豐富)</option>
+                <option value="Medium">Medium (一般)</option>
+                <option value="Low">Low (匱乏)</option>
+              </select>
+            </div>
+
+            <!-- Family Income -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">家庭收入水平 (Family Income)</label>
+              <select id="in_Family_Income" onchange="updatePrediction()"
+                      class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500">
+                <option value="High" selected>High (高收入)</option>
+                <option value="Medium">Medium (中等收入)</option>
+                <option value="Low">Low (低收入)</option>
+              </select>
+            </div>
+
+            <!-- Peer Influence -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">同儕影響 (Peer Influence)</label>
+              <select id="in_Peer_Influence" onchange="updatePrediction()"
+                      class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500">
+                <option value="Positive" selected>Positive (正向)</option>
+                <option value="Neutral">Neutral (中立)</option>
+                <option value="Negative">Negative (負面)</option>
+              </select>
+            </div>
+
+            <!-- Distance from Home -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">通學距離 (Distance from Home)</label>
+              <select id="in_Distance_from_Home" onchange="updatePrediction()"
+                      class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500">
+                <option value="Near" selected>Near (近)</option>
+                <option value="Moderate">Moderate (中等)</option>
+                <option value="Far">Far (遠)</option>
+              </select>
+            </div>
+
+            <!-- Teacher Quality -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">教師教學品質 (Teacher Quality)</label>
+              <select id="in_Teacher_Quality" onchange="updatePrediction()"
+                      class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500">
+                <option value="High" selected>High (優良)</option>
+                <option value="Medium">Medium (普通)</option>
+                <option value="Low">Low (欠佳)</option>
+              </select>
+            </div>
+
+            <!-- Motivation Level -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">學習動機 (Motivation Level)</label>
+              <select id="in_Motivation_Level" onchange="updatePrediction()"
+                      class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500">
+                <option value="High" selected>High (強烈)</option>
+                <option value="Medium">Medium (一般)</option>
+                <option value="Low">Low (低落)</option>
+              </select>
+            </div>
+
+            <!-- Parental Education Level -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">家長教育程度 (Parent Education)</label>
+              <select id="in_Parental_Education_Level" onchange="updatePrediction()"
+                      class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500">
+                <option value="Postgraduate" selected>Postgraduate (研究所)</option>
+                <option value="College">College (大學)</option>
+                <option value="High School">High School (高中職)</option>
+              </select>
+            </div>
+
+            <!-- Learning Disabilities -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">學習障礙 (Learning Disabilities)</label>
+              <select id="in_Learning_Disabilities" onchange="updatePrediction()"
+                      class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500">
+                <option value="No" selected>No (無)</option>
+                <option value="Yes">Yes (有)</option>
+              </select>
+            </div>
+
+            <!-- Internet Access & Extracurricular -->
+            <div class="sm:col-span-2 flex flex-wrap gap-4 pt-2">
+              <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-700">
+                <input id="in_Internet_Access" type="checkbox" checked onchange="updatePrediction()" class="w-4 h-4 text-blue-600 rounded">
+                家中具備網際網路連線 (Internet Access)
+              </label>
+              <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-700">
+                <input id="in_Extracurricular_Activities" type="checkbox" checked onchange="updatePrediction()" class="w-4 h-4 text-blue-600 rounded">
+                參加課外活動 (Extracurricular Activities)
+              </label>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Output Score Card (1 col) -->
+        <div class="bg-gradient-to-br from-slate-900 to-blue-950 text-white p-6 rounded-2xl shadow-xl flex flex-col justify-between">
+          <div>
+            <div class="text-xs uppercase tracking-wider text-blue-400 font-bold mb-1">即時推論成果</div>
+            <h3 class="text-lg font-bold">期末考試預測成績</h3>
+
+            <div class="my-6 text-center">
+              <div class="text-6xl font-black tracking-tight text-white" id="out_score">
+                79.6
+              </div>
+              <div class="text-xs text-blue-300 mt-2 font-medium">預測分數 (Exam_Score, 滿分 100)</div>
+            </div>
+
+            <div class="space-y-4 text-xs">
+              <!-- CI -->
+              <div class="bg-white/10 p-3 rounded-xl border border-white/10">
+                <div class="flex justify-between items-center text-amber-300 font-bold mb-1">
+                  <span>95% 信賴區間 (CI)</span>
+                  <i class="fas fa-info-circle" title="母體平均期望值可能區間"></i>
+                </div>
+                <div class="text-base font-extrabold text-white" id="out_ci">
+                  [79.28 ~ 79.91] 分
+                </div>
+                <p class="text-[11px] text-slate-300 mt-0.5">針對此特徵群體的「平均表現」區間（較窄）</p>
+              </div>
+
+              <!-- PI -->
+              <div class="bg-white/10 p-3 rounded-xl border border-white/10">
+                <div class="flex justify-between items-center text-purple-300 font-bold mb-1">
+                  <span>95% 預測區間 (PI)</span>
+                  <i class="fas fa-shield-alt" title="單一特定學生個別分數可能區間"></i>
+                </div>
+                <div class="text-base font-extrabold text-white" id="out_pi">
+                  [75.49 ~ 83.71] 分
+                </div>
+                <p class="text-[11px] text-slate-300 mt-0.5">包含個體隨機波動的「個別學生真實得分」區間（較寬）</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-white/10 text-[11px] text-slate-400 text-center">
+            精簡多元線性回歸模型 (24 特徵) • 誤差標準差 $s_e = 2.09$
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: CRISP-DM Process Walkthrough -->
+    <section id="crisp-dm" class="space-y-6">
+      <div class="text-center max-w-2xl mx-auto">
+        <span class="badge bg-indigo-100 text-indigo-700 mb-2">Methodology</span>
+        <h2 class="text-2xl font-bold text-slate-900">CRISP-DM 跨產業標準資料探勘流程</h2>
+        <p class="text-sm text-slate-500 mt-1">
+          本專案嚴格遵循 CRISP-DM 六大階段，確保從教育問題定義至系統部署皆具備實證與統計依據。
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+          <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center font-bold mb-3">1</div>
+          <h3 class="font-bold text-slate-900 text-base">Business Understanding</h3>
+          <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+            定義學生學業表現預測課題，建立早期預警機制。設定成功標準為 $R^2 \ge 0.75$、RMSE $\le 2.0$ 並產出 95% 信賴/預測區間。
+          </p>
+        </div>
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+          <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold mb-3">2</div>
+          <h3 class="font-bold text-slate-900 text-base">Data Understanding</h3>
+          <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+            探勘 6,607 筆樣本、20 個特徵。發現 Attendance ($r=0.581$) 與 Hours_Studied ($r=0.445$) 相關度最強，並檢驗出 50 筆異常高分樣本。
+          </p>
+        </div>
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+          <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center font-bold mb-3">3</div>
+          <h3 class="font-bold text-slate-900 text-base">Data Preparation</h3>
+          <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+            針對 3 個缺失欄位以眾數填補；One-Hot 虛擬變數編碼 (drop_first=True) 避免共線性陷阱；80/20 分割訓練集與測試集。
+          </p>
+        </div>
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+          <div class="w-8 h-8 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center font-bold mb-3">4</div>
+          <h3 class="font-bold text-slate-900 text-base">Modeling</h3>
+          <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+            實作單純線性回歸、全特徵多元回歸、p-value 逐步淘汰/Lasso 特徵選擇精簡回歸、ElasticNetCV 以及歷史成績自回歸消融實驗。
+          </p>
+        </div>
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+          <div class="w-8 h-8 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center font-bold mb-3">5</div>
+          <h3 class="font-bold text-slate-900 text-base">Evaluation</h3>
+          <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+            綜合比較 $R^2$、Adj-$R^2$、RMSE、MAE。執行殘差診斷（常態 Q-Q、殘差 vs 擬合值），繪製 95% CI 與 95% PI 預測圖。
+          </p>
+        </div>
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+          <div class="w-8 h-8 rounded-lg bg-cyan-100 text-cyan-600 flex items-center justify-center font-bold mb-3">6</div>
+          <h3 class="font-bold text-slate-900 text-base">Deployment</h3>
+          <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+            封裝推論模組為單一主程式 `main.py` 與互動式 Web 儀表板，提供教育現場出勤率優先監控與課後輔導補助等實證策略。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Model Performance Comparison -->
+    <section id="models-comparison" class="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+      <div>
+        <span class="badge bg-purple-100 text-purple-700 mb-2">Model Evaluation</span>
+        <h2 class="text-2xl font-bold text-slate-900">模型效能綜合評估對比</h2>
+        <p class="text-sm text-slate-500 mt-1">測試集獨立評估指標與特徵選擇成果對比表：</p>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm border-collapse">
+          <thead>
+            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-600">
+              <th class="py-3 px-4">模型架構</th>
+              <th class="py-3 px-4">特徵數</th>
+              <th class="py-3 px-4">測試集 $R^2$</th>
+              <th class="py-3 px-4">調整後 $R^2_{\text{adj}}$</th>
+              <th class="py-3 px-4">均方根誤差 (RMSE)</th>
+              <th class="py-3 px-4">平均絕對誤差 (MAE)</th>
+              <th class="py-3 px-4">備註結論</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr>
+              <td class="py-3.5 px-4 font-semibold text-slate-800">Model 1: 單純線性回歸 (Attendance)</td>
+              <td class="py-3.5 px-4">1</td>
+              <td class="py-3.5 px-4">0.3476</td>
+              <td class="py-3.5 px-4">—</td>
+              <td class="py-3.5 px-4">3.0367</td>
+              <td class="py-3.5 px-4">2.1079</td>
+              <td class="py-3.5 px-4 text-xs text-slate-500">僅解釋約 35% 變異，無法捕捉多面向因素</td>
+            </tr>
+            <tr>
+              <td class="py-3.5 px-4 font-semibold text-slate-800">Model 2: 多元全特徵線性回歸</td>
+              <td class="py-3.5 px-4">27</td>
+              <td class="py-3.5 px-4">0.7696</td>
+              <td class="py-3.5 px-4">0.7648</td>
+              <td class="py-3.5 px-4">1.8044</td>
+              <td class="py-3.5 px-4">0.4524</td>
+              <td class="py-3.5 px-4 text-xs text-slate-500">含 3 個不顯著噪音變數</td>
+            </tr>
+            <tr class="bg-blue-50/60 font-medium">
+              <td class="py-3.5 px-4 font-bold text-blue-700">Model 3: 特徵選擇精簡回歸 (推薦最佳 ★)</td>
+              <td class="py-3.5 px-4 font-bold text-blue-700">24</td>
+              <td class="py-3.5 px-4 font-bold text-blue-700">0.7697</td>
+              <td class="py-3.5 px-4 font-bold text-blue-700">0.7655</td>
+              <td class="py-3.5 px-4 font-bold text-blue-700">1.8041</td>
+              <td class="py-3.5 px-4 font-bold text-blue-700">0.4515</td>
+              <td class="py-3.5 px-4 text-xs text-blue-700">剔除無效變數，保留最高解釋力與泛化性</td>
+            </tr>
+            <tr>
+              <td class="py-3.5 px-4 font-semibold text-slate-800">Model 4A: ElasticNetCV (自動化正則化)</td>
+              <td class="py-3.5 px-4">24</td>
+              <td class="py-3.5 px-4">0.7544</td>
+              <td class="py-3.5 px-4">—</td>
+              <td class="py-3.5 px-4">1.8634</td>
+              <td class="py-3.5 px-4">0.6464</td>
+              <td class="py-3.5 px-4 text-xs text-slate-500">雙重 L1/L2 正則化，抗過擬合</td>
+            </tr>
+            <tr>
+              <td class="py-3.5 px-4 font-semibold text-slate-800">Model 4B: 無自回歸項 (無 Previous_Scores)</td>
+              <td class="py-3.5 px-4">23</td>
+              <td class="py-3.5 px-4">0.7355</td>
+              <td class="py-3.5 px-4">0.7308</td>
+              <td class="py-3.5 px-4">1.9332</td>
+              <td class="py-3.5 px-4">0.5012</td>
+              <td class="py-3.5 px-4 text-xs text-slate-500">當前行為仍能解釋 73.6% 成績變異</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Section 5: Gallery of Figures -->
+    <section id="figures" class="space-y-6">
+      <div class="text-center max-w-2xl mx-auto">
+        <span class="badge bg-emerald-100 text-emerald-700 mb-2">Visualizations</span>
+        <h2 class="text-2xl font-bold text-slate-900">核心視覺化與預測圖表庫</h2>
+        <p class="text-sm text-slate-500 mt-1">
+          完整呈現單純回歸、多元回歸之 95% 信賴區間 (CI) 與預測區間 (PI)，以及特徵重要性與殘差四合一診斷。
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Figure 1 -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div>
+            <span class="badge bg-amber-100 text-amber-800 mb-2">95% CI & PI</span>
+            <h3 class="font-bold text-slate-900 text-base mb-1">單純線性回歸預測圖 (Attendance vs. Exam_Score)</h3>
+            <p class="text-xs text-slate-500 mb-4">清楚呈現回歸擬合線、95% 信賴區間 (CI: 期望值區間) 與 95% 預測區間 (PI: 個別觀測值區間)。</p>
+          </div>
+          <div class="border rounded-xl overflow-hidden bg-slate-50">
+            <img src="figures/simple_regression_ci_pi.png" alt="Simple Linear Regression" class="w-full h-auto hover:scale-105 transition duration-300">
+          </div>
+        </div>
+
+        <!-- Figure 2 -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div>
+            <span class="badge bg-purple-100 text-purple-800 mb-2">Multivariate PI Ribbon</span>
+            <h3 class="font-bold text-slate-900 text-base mb-1">多元線性回歸排序預測成果與 95% 預測區間帶</h3>
+            <p class="text-xs text-slate-500 mb-4">樣本依預測成績排序，紫色漸層預測區間 (PI) 覆蓋 96.5% 測試點，展現絕佳區間校準能力。</p>
+          </div>
+          <div class="border rounded-xl overflow-hidden bg-slate-50">
+            <img src="figures/multiple_regression_prediction_intervals.png" alt="Multiple Regression Prediction Intervals" class="w-full h-auto hover:scale-105 transition duration-300">
+          </div>
+        </div>
+
+        <!-- Figure 3 -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div>
+            <span class="badge bg-blue-100 text-blue-800 mb-2">Beta Coefficients</span>
+            <h3 class="font-bold text-slate-900 text-base mb-1">標準化回歸係數 (Beta) - 特徵影響力排序</h3>
+            <p class="text-xs text-slate-500 mb-4">Attendance (+0.584) 與 Hours_Studied (+0.448) 具有最高正向推動力；低資源與低家長參與為最大負面阻力。</p>
+          </div>
+          <div class="border rounded-xl overflow-hidden bg-slate-50">
+            <img src="figures/feature_importance.png" alt="Feature Importance" class="w-full h-auto hover:scale-105 transition duration-300">
+          </div>
+        </div>
+
+        <!-- Figure 4 -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div>
+            <span class="badge bg-rose-100 text-rose-800 mb-2">Residual Diagnostics</span>
+            <h3 class="font-bold text-slate-900 text-base mb-1">殘差四合一診斷圖 (Q-Q, Fitted, 分佈, Actual vs Pred)</h3>
+            <p class="text-xs text-slate-500 mb-4">驗證線性假定、常態性與同質變異性，並明確展示約 50 筆異常高分離群點的分佈特徵。</p>
+          </div>
+          <div class="border rounded-xl overflow-hidden bg-slate-50">
+            <img src="figures/residual_diagnostics.png" alt="Residual Diagnostics" class="w-full h-auto hover:scale-105 transition duration-300">
+          </div>
+        </div>
+
+        <!-- Figure 5 -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div>
+            <span class="badge bg-cyan-100 text-cyan-800 mb-2">Model Benchmark</span>
+            <h3 class="font-bold text-slate-900 text-base mb-1">不同模型與特徵選擇效能比較 (R² vs. RMSE)</h3>
+            <p class="text-xs text-slate-500 mb-4">展示從單純線性 (R²=0.35) 到特徵選擇多元回歸 (R²=0.77, RMSE=1.80) 的顯著優化進程。</p>
+          </div>
+          <div class="border rounded-xl overflow-hidden bg-slate-50">
+            <img src="figures/model_comparison.png" alt="Model Comparison" class="w-full h-auto hover:scale-105 transition duration-300">
+          </div>
+        </div>
+
+        <!-- Figure 6 -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div>
+            <span class="badge bg-indigo-100 text-indigo-800 mb-2">Correlation Heatmap</span>
+            <h3 class="font-bold text-slate-900 text-base mb-1">數值特徵 Pearson 相關係數矩陣</h3>
+            <p class="text-xs text-slate-500 mb-4">全面分析 Attendance、Hours_Studied、Previous_Scores、Tutoring_Sessions 與 Exam_Score 之關聯矩陣。</p>
+          </div>
+          <div class="border rounded-xl overflow-hidden bg-slate-50">
+            <img src="figures/correlation_heatmap.png" alt="Correlation Heatmap" class="w-full h-auto hover:scale-105 transition duration-300">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 6: GitHub Pages Deployment Guide -->
+    <section class="bg-slate-900 text-white p-6 md:p-8 rounded-2xl shadow-xl space-y-4">
+      <div class="flex items-center gap-3">
+        <i class="fab fa-github text-3xl text-blue-400"></i>
+        <div>
+          <h2 class="text-xl font-bold">GitHub Pages 部署指引 (Deploy to github.io)</h2>
+          <p class="text-xs text-slate-400">如何將本儲存庫部署為個人 GitHub Pages 線上網頁：</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs pt-2">
+        <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+          <div class="font-bold text-blue-300 mb-1">步驟 1: 推送程式碼</div>
+          <p class="text-slate-300">
+            將工作目錄所有檔案（包含 <code class="text-amber-300">index.html</code>、<code class="text-amber-300">figures/</code> 等）提交並推送至 GitHub 遠端儲存庫 <code class="text-amber-300">main</code> 分支。
+          </p>
+        </div>
+        <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+          <div class="font-bold text-blue-300 mb-1">步驟 2: 開啟 GitHub Pages</div>
+          <p class="text-slate-300">
+            進入 GitHub 儲存庫頁面，點選 <strong>Settings</strong> → 左側 <strong>Pages</strong> → Build and deployment 選擇 <strong>Deploy from a branch</strong>。
+          </p>
+        </div>
+        <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+          <div class="font-bold text-blue-300 mb-1">步驟 3: 選擇主分支發布</div>
+          <p class="text-slate-300">
+            Branch 選擇 <strong>main</strong>，目錄選擇 <strong>/ (root)</strong>，按下 <strong>Save</strong>。等待約 1~2 分鐘即可透過 <code class="text-emerald-400">https://kouou24.github.io/HW2_Linear_regression/</code> 存取！
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div>
+        HW2 線性回歸專案 • CRISP-DM Standard Analysis • 學生學業表現預測
+      </div>
+      <div>
+        <a href="https://github.com/Kouou24/HW2_Linear_regression" target="_blank" class="text-blue-600 hover:underline font-semibold">
+          GitHub: Kouou24/HW2_Linear_regression
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript: Linear Regression Inference Calculator Engine -->
+  <script>
+    // Selected Multiple Linear Regression Model Weights & Intercept (from OLS training)
+    const MODEL_WEIGHTS = {
+      "const": 41.82782,
+      "Hours_Studied": 0.29309,
+      "Attendance": 0.19888,
+      "Previous_Scores": 0.04905,
+      "Tutoring_Sessions": 0.50788,
+      "Physical_Activity": 0.19231,
+      "Parental_Involvement_Low": -2.00185,
+      "Parental_Involvement_Medium": -1.06949,
+      "Access_to_Resources_Low": -2.10154,
+      "Access_to_Resources_Medium": -1.03161,
+      "Extracurricular_Activities_Yes": 0.58311,
+      "Motivation_Level_Low": -1.04344,
+      "Motivation_Level_Medium": -0.55280,
+      "Internet_Access_Yes": 0.95739,
+      "Family_Income_Low": -1.11016,
+      "Family_Income_Medium": -0.64108,
+      "Teacher_Quality_Low": -1.01559,
+      "Teacher_Quality_Medium": -0.55569,
+      "Peer_Influence_Neutral": 0.56619,
+      "Peer_Influence_Positive": 1.05162,
+      "Learning_Disabilities_Yes": -0.85775,
+      "Parental_Education_Level_High School": -0.45863,
+      "Parental_Education_Level_Postgraduate": 0.51398,
+      "Distance_from_Home_Moderate": 0.31665,
+      "Distance_from_Home_Near": 0.85395
+    };
+
+    const RESIDUAL_SE = 2.09026; // Residual standard error
+    const T_CRIT = 1.96;         // 95% critical value
+    const MEAN_SE_EST = 0.16;    // Average standard error of the mean estimate
+
+    function updatePrediction() {
+      // Numerical features
+      const attendance = parseFloat(document.getElementById('in_Attendance').value);
+      const hours = parseFloat(document.getElementById('in_Hours_Studied').value);
+      const prevScores = parseFloat(document.getElementById('in_Previous_Scores').value);
+      const tutoring = parseFloat(document.getElementById('in_Tutoring_Sessions').value);
+      const physical = parseFloat(document.getElementById('in_Physical_Activity').value);
+
+      // Update slider labels
+      document.getElementById('val_Attendance').innerText = attendance + '%';
+      document.getElementById('val_Hours_Studied').innerText = hours + ' 小時';
+      document.getElementById('val_Previous_Scores').innerText = prevScores + ' 分';
+      document.getElementById('val_Tutoring_Sessions').innerText = tutoring + ' 次';
+      document.getElementById('val_Physical_Activity').innerText = physical + ' 小時';
+
+      // Categorical features
+      const pInvolve = document.getElementById('in_Parental_Involvement').value;
+      const resAcc = document.getElementById('in_Access_to_Resources').value;
+      const famInc = document.getElementById('in_Family_Income').value;
+      const peerInf = document.getElementById('in_Peer_Influence').value;
+      const dist = document.getElementById('in_Distance_from_Home').value;
+      const tQual = document.getElementById('in_Teacher_Quality').value;
+      const motiv = document.getElementById('in_Motivation_Level').value;
+      const pEdu = document.getElementById('in_Parental_Education_Level').value;
+      const lDis = document.getElementById('in_Learning_Disabilities').value;
+      const internet = document.getElementById('in_Internet_Access').checked;
+      const extra = document.getElementById('in_Extracurricular_Activities').checked;
+
+      // Compute y_hat
+      let yHat = MODEL_WEIGHTS["const"];
+      yHat += MODEL_WEIGHTS["Attendance"] * attendance;
+      yHat += MODEL_WEIGHTS["Hours_Studied"] * hours;
+      yHat += MODEL_WEIGHTS["Previous_Scores"] * prevScores;
+      yHat += MODEL_WEIGHTS["Tutoring_Sessions"] * tutoring;
+      yHat += MODEL_WEIGHTS["Physical_Activity"] * physical;
+
+      if (pInvolve === 'Low') yHat += MODEL_WEIGHTS["Parental_Involvement_Low"];
+      else if (pInvolve === 'Medium') yHat += MODEL_WEIGHTS["Parental_Involvement_Medium"];
+
+      if (resAcc === 'Low') yHat += MODEL_WEIGHTS["Access_to_Resources_Low"];
+      else if (resAcc === 'Medium') yHat += MODEL_WEIGHTS["Access_to_Resources_Medium"];
+
+      if (famInc === 'Low') yHat += MODEL_WEIGHTS["Family_Income_Low"];
+      else if (famInc === 'Medium') yHat += MODEL_WEIGHTS["Family_Income_Medium"];
+
+      if (peerInf === 'Positive') yHat += MODEL_WEIGHTS["Peer_Influence_Positive"];
+      else if (peerInf === 'Neutral') yHat += MODEL_WEIGHTS["Peer_Influence_Neutral"];
+
+      if (dist === 'Near') yHat += MODEL_WEIGHTS["Distance_from_Home_Near"];
+      else if (dist === 'Moderate') yHat += MODEL_WEIGHTS["Distance_from_Home_Moderate"];
+
+      if (tQual === 'Low') yHat += MODEL_WEIGHTS["Teacher_Quality_Low"];
+      else if (tQual === 'Medium') yHat += MODEL_WEIGHTS["Teacher_Quality_Medium"];
+
+      if (motiv === 'Low') yHat += MODEL_WEIGHTS["Motivation_Level_Low"];
+      else if (motiv === 'Medium') yHat += MODEL_WEIGHTS["Motivation_Level_Medium"];
+
+      if (pEdu === 'Postgraduate') yHat += MODEL_WEIGHTS["Parental_Education_Level_Postgraduate"];
+      else if (pEdu === 'High School') yHat += MODEL_WEIGHTS["Parental_Education_Level_High School"];
+
+      if (lDis === 'Yes') yHat += MODEL_WEIGHTS["Learning_Disabilities_Yes"];
+      if (internet) yHat += MODEL_WEIGHTS["Internet_Access_Yes"];
+      if (extra) yHat += MODEL_WEIGHTS["Extracurricular_Activities_Yes"];
+
+      // 95% Confidence Interval for mean
+      const ciDelta = T_CRIT * MEAN_SE_EST;
+      const ciLower = (yHat - ciDelta).toFixed(2);
+      const ciUpper = (yHat + ciDelta).toFixed(2);
+
+      // 95% Prediction Interval for individual
+      const piDelta = T_CRIT * Math.sqrt(RESIDUAL_SE * RESIDUAL_SE + MEAN_SE_EST * MEAN_SE_EST);
+      const piLower = (yHat - piDelta).toFixed(2);
+      const piUpper = (yHat + piDelta).toFixed(2);
+
+      // Display
+      document.getElementById('out_score').innerText = yHat.toFixed(1);
+      document.getElementById('out_ci').innerText = `[${ciLower} ~ ${ciUpper}] 分`;
+      document.getElementById('out_pi').innerText = `[${piLower} ~ ${piUpper}] 分`;
+    }
+
+    function loadPreset(type) {
+      if (type === 'high') {
+        document.getElementById('in_Attendance').value = 95;
+        document.getElementById('in_Hours_Studied').value = 28;
+        document.getElementById('in_Previous_Scores').value = 90;
+        document.getElementById('in_Tutoring_Sessions').value = 3;
+        document.getElementById('in_Physical_Activity').value = 4;
+        document.getElementById('in_Parental_Involvement').value = 'High';
+        document.getElementById('in_Access_to_Resources').value = 'High';
+        document.getElementById('in_Family_Income').value = 'High';
+        document.getElementById('in_Peer_Influence').value = 'Positive';
+        document.getElementById('in_Distance_from_Home').value = 'Near';
+        document.getElementById('in_Teacher_Quality').value = 'High';
+        document.getElementById('in_Motivation_Level').value = 'High';
+        document.getElementById('in_Parental_Education_Level').value = 'Postgraduate';
+        document.getElementById('in_Learning_Disabilities').value = 'No';
+        document.getElementById('in_Internet_Access').checked = true;
+        document.getElementById('in_Extracurricular_Activities').checked = true;
+      } else if (type === 'atrisk') {
+        document.getElementById('in_Attendance').value = 65;
+        document.getElementById('in_Hours_Studied').value = 10;
+        document.getElementById('in_Previous_Scores').value = 55;
+        document.getElementById('in_Tutoring_Sessions').value = 0;
+        document.getElementById('in_Physical_Activity').value = 1;
+        document.getElementById('in_Parental_Involvement').value = 'Low';
+        document.getElementById('in_Access_to_Resources').value = 'Low';
+        document.getElementById('in_Family_Income').value = 'Low';
+        document.getElementById('in_Peer_Influence').value = 'Negative';
+        document.getElementById('in_Distance_from_Home').value = 'Far';
+        document.getElementById('in_Teacher_Quality').value = 'Low';
+        document.getElementById('in_Motivation_Level').value = 'Low';
+        document.getElementById('in_Parental_Education_Level').value = 'High School';
+        document.getElementById('in_Learning_Disabilities').value = 'Yes';
+        document.getElementById('in_Internet_Access').checked = false;
+        document.getElementById('in_Extracurricular_Activities').checked = false;
+      }
+      updatePrediction();
+    }
+
+    // Initialize on load
+    window.addEventListener('DOMContentLoaded', () => {
+      updatePrediction();
+    });
+  </script>
+</body>
+</html>
+

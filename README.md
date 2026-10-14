@@ -3,14 +3,37 @@
 
 ---
 
+## 🔗 專案連結與線上展示 (Links & Live Demo)
+* 🌐 **GitHub Pages (Live Demo)**: [https://kouou24.github.io/HW2_Linear_regression/](https://kouou24.github.io/HW2_Linear_regression/)
+* 📦 **GitHub Repository**: [https://github.com/Kouou24/HW2_Linear_regression](https://github.com/Kouou24/HW2_Linear_regression)
+
+---
+
+## 🌐 互動展示網頁 (Interactive Demo)
+本專案附帶可獨立執行的現代化響應式互動網頁應用程式 [`index.html`](./index.html)，具備以下核心功能：
+1. **即時推論計算機 (Inference Calculator)**：可自由調整出席率、自修時數、過去成績與選擇各項家庭/環境屬性，即時以多元回歸公式推算期末預期成績。
+2. **統計區間動態評估**：同時計算並動態呈現 **95% 信賴區間 (CI: 群體期望值估計)** 與 **95% 預測區間 (PI: 個別學生波動範圍)**。
+3. **典型學生情境預設**：內建「範例一：高學習投入學生」與「範例二：潛在高風險/需輔導學生」一鍵帶入。
+4. **模型評估與視覺化圖表全覽**：內建所有高解析圖表畫廊與指標對照表。
+
+* 🚀 **線上直接體驗 (GitHub Pages)**: [https://kouou24.github.io/HW2_Linear_regression/](https://kouou24.github.io/HW2_Linear_regression/)
+* 💻 **本地即時預覽**：直接雙擊開啟工作目錄中的 [`index.html`](./index.html)。
+* 🖥️ **本地 HTTP 伺服器啟動方式**：
+  ```bash
+  python -m http.server 8000
+  ```
+  啟動後於瀏覽器訪問：[http://localhost:8000/index.html](http://localhost:8000/index.html)
+
+---
+
 ## 專案目錄與架構
 
 ```text
 HW2_Linear_regression/
 │
 ├── StudentPerformanceFactors.csv       # 原始數據集 (6,607 筆樣本，20 個欄位)
-├── run_analysis.py                     # 完整分析主腳本 (資料處理、特徵工程、模型訓練、診斷繪圖)
-├── predict.py                          # 部署推論腳本 (提供 95% CI/PI 之學生預測介面)
+├── main.py                             # 主程式 (完整 CRISP-DM 流程：分析 + 訓練 + 推論一體化)
+├── index.html                          # 現代化響應式互動視覺化儀表板 (Live Demo)
 ├── README.md                           # CRISP-DM 完整分析與成果總整理報告
 │
 ├── figures/                            # 成果視覺化圖表
@@ -21,8 +44,7 @@ HW2_Linear_regression/
 │   ├── residual_diagnostics.png        # 殘差四合一診斷圖 (Q-Q, Fitted, 分佈, Actual vs Pred)
 │   └── model_comparison.png            # 各模型效能指標對比柱狀圖
 │
-└── models/                             # 模型持久化檔案與評估數據
-    ├── best_linear_model.joblib        # 最佳回歸模型 Pipeline Artifact
+└── models/                             # 評估數據
     └── metrics.json                    # 評估量化指標記錄
 ```
 
@@ -283,16 +305,51 @@ python predict.py
 * Python 3.10+
 * 依賴套件：
   ```bash
-  pip install pandas numpy scikit-learn matplotlib seaborn statsmodels joblib
+  pip install pandas numpy scikit-learn matplotlib seaborn statsmodels
   ```
 
-### 2. 執行完整分析與圖表生成
+### 2. 執行完整分析、圖表生成與推論展示（一步完成）
 ```bash
-python run_analysis.py
+python -X utf8 main.py
 ```
-執行後將自動完成資料前處理、模型擬合、特徵選擇、殘差診斷，並將所有圖表儲存至 `figures/` 資料夾，模型儲存至 `models/`。
+執行後將自動依序完成：
+- **Phase 2 & 3**：資料載入、缺失值填補、Encoding、Train-Test Split，輸出 `figures/correlation_heatmap.png`
+- **Phase 4**：Model 1（單純線性回歸）、Model 2（多元全特徵 OLS）、Model 3（特徵選擇精簡）、Model 4（ElasticNetCV + 自回歸分析）
+- **Phase 5**：輸出四張評估圖至 `figures/` 資料夾，指標儲存至 `models/metrics.json`
+- **Phase 6**：兩個典型學生案例的推論展示（含 95% CI 與 95% PI）
 
-### 3. 執行推論測試
+> **注意**：`-X utf8` 旗標強制終端機以 UTF-8 輸出中文內容，建議在 Windows 環境下加上此參數。
+
+### 3. 本地啟動互動儀表板 (Interactive Web Dashboard)
+本專案提供單一檔案響應式儀表板 [`index.html`](./index.html)，可於本地直接啟動預覽：
 ```bash
-python predict.py
+python -m http.server 8000
 ```
+啟動後於瀏覽器訪問：[http://localhost:8000/index.html](http://localhost:8000/index.html)
+
+---
+
+## 🚀 部署至 GitHub Pages (Deploy to github.io) 指引
+
+本專案之互動儀表板為無伺服器純靜態前端架構，可直接免費託管於 **GitHub Pages** (`https://<username>.github.io/<repo>/`)：
+
+### 步驟 1：提交並推送程式碼至 GitHub
+在專案根目錄開啟終端機（PowerShell），執行 Git 指令：
+```bash
+git add .
+git commit -m "feat: add interactive web dashboard and update README with live demo"
+git push origin main
+```
+
+### 步驟 2：啟用 GitHub Pages
+1. 開啟瀏覽器進入您的儲存庫：[https://github.com/Kouou24/HW2_Linear_regression](https://github.com/Kouou24/HW2_Linear_regression)
+2. 點選儲存庫頂部選單的 **Settings**（設定）。
+3. 在左側側邊欄中點選 **Pages**（頁面）。
+4. 在 **Build and deployment** 區塊：
+   - **Source** 下拉選單選擇：`Deploy from a branch`。
+   - **Branch** 選擇：`main`，資料夾選擇：`/ (root)`。
+   - 點選 **Save**（儲存）。
+
+### 步驟 3：查看線上即時成果
+等待約 1~2 分鐘 GitHub Actions 自動建置完成後，即可直接透過專屬網址存取：
+👉 **[https://kouou24.github.io/HW2_Linear_regression/](https://kouou24.github.io/HW2_Linear_regression/)**
