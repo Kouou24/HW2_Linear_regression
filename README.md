@@ -7,7 +7,7 @@
 * 🌐 **GitHub Pages (Live Demo)**: [https://kouou24.github.io/HW2_Linear_regression/](https://kouou24.github.io/HW2_Linear_regression/)
 * 📦 **GitHub Repository**: [https://github.com/Kouou24/HW2_Linear_regression](https://github.com/Kouou24/HW2_Linear_regression)
 * 🌐 **Result**:
-<img width="1920" height="4642" alt="image" src="https://github.com/user-attachments/assets/1ac52b4a-233e-4756-9e77-c1b2333fe2e6" />
+<img width="1920" height="4659" alt="image" src="https://github.com/user-attachments/assets/e7d682e0-a0ef-42b8-b8ca-0a4d13e7e719" />
 
 ---
 
