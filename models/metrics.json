@@ -30,5 +30,33 @@
         "Sleep_Hours",
         "School_Type_Public",
         "Gender_Male"
-    ]
+    ],
+    "params": {
+        "const": 41.82782189625826,
+        "Hours_Studied": 0.2930927505007556,
+        "Attendance": 0.1988826930701205,
+        "Previous_Scores": 0.049048057974766496,
+        "Tutoring_Sessions": 0.5078761543115125,
+        "Physical_Activity": 0.1923098468868985,
+        "Parental_Involvement_Low": -2.001853216881401,
+        "Parental_Involvement_Medium": -1.0694932134346884,
+        "Access_to_Resources_Low": -2.101543989040434,
+        "Access_to_Resources_Medium": -1.0316121965502607,
+        "Extracurricular_Activities_Yes": 0.5831091716972764,
+        "Motivation_Level_Low": -1.0434407037252331,
+        "Motivation_Level_Medium": -0.5527997728305755,
+        "Internet_Access_Yes": 0.9573855584268673,
+        "Family_Income_Low": -1.110156291906728,
+        "Family_Income_Medium": -0.6410847769576545,
+        "Teacher_Quality_Low": -1.0155915872200227,
+        "Teacher_Quality_Medium": -0.5556928803188437,
+        "Peer_Influence_Neutral": 0.5661855685696847,
+        "Peer_Influence_Positive": 1.0516213688536777,
+        "Learning_Disabilities_Yes": -0.8577461582411902,
+        "Parental_Education_Level_High School": -0.4586343451552719,
+        "Parental_Education_Level_Postgraduate": 0.513978382055782,
+        "Distance_from_Home_Moderate": 0.3166456890760155,
+        "Distance_from_Home_Near": 0.8539508418685202
+    },
+    "residual_scale": 2.0902651839735995
 }

@@ -1,0 +1,65 @@
+{
+    "simple_regression": {
+        "r2": 0.5517373918768889,
+        "rmse": 6.2269131747805915,
+        "mae": 4.639579605168193
+    },
+    "full_multiple_regression": {
+        "r2": 0.8193807440703221,
+        "adj_r2": 0.8133175535002446,
+        "rmse": 3.9526519813771643,
+        "mae": 2.928104812166851
+    },
+    "selected_features_regression": {
+        "r2": 0.820420892753009,
+        "adj_r2": 0.81601790238268,
+        "rmse": 3.9412542986345973,
+        "mae": 2.928018497368944
+    },
+    "elasticnet_cv": {
+        "r2": 0.8135568837606133,
+        "rmse": 4.01587078002834,
+        "mae": 2.9776298407595947
+    },
+    "selected_features": [
+        "Adult Mortality",
+        "infant deaths",
+        "Alcohol",
+        "Hepatitis B",
+        "Measles",
+        "BMI",
+        "under-five deaths",
+        "Polio",
+        "Diphtheria",
+        "HIV/AIDS",
+        "GDP",
+        "Income composition of resources",
+        "Schooling",
+        "Status_Developed"
+    ],
+    "dropped_features": [
+        "percentage expenditure",
+        "Total expenditure",
+        "Population",
+        "thinness  1-19 years",
+        "thinness 5-9 years"
+    ],
+    "params": {
+        "const": 55.01889819418834,
+        "Adult Mortality": -0.020630733160122556,
+        "infant deaths": 0.09525088379071484,
+        "Alcohol": 0.10287021754911584,
+        "Hepatitis B": -0.017218027760624532,
+        "Measles": -2.863851800902337e-05,
+        "BMI": 0.04888816472668641,
+        "under-five deaths": -0.0715700793432074,
+        "Polio": 0.03002878533909043,
+        "Diphtheria": 0.04070609035562893,
+        "HIV/AIDS": -0.4815643805760094,
+        "GDP": 4.832250603582355e-05,
+        "Income composition of resources": 5.293215142489729,
+        "Schooling": 0.6641563522143019,
+        "Status_Developed": 1.5995434906745778
+    },
+    "residual_scale": 4.086636803159121
+}
